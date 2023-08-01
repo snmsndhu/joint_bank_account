@@ -20,7 +20,20 @@ contract BankAccount {
         uint balance;
         mapping(uint => WithdrawRequest) withdrawRequests;
     }
-    constructor() {
-        
+
+    mapping(uint => Account) accounts;
+    mapping(address => uint[]) userAccounts;
+
+    uint nextAccountId;
+    uint nextWithdrawId;
+
+    function deposit(uint accountId) external payable {
+
     }
+
+    function createAccount(address[] calldata otherOwners) external {
+
+    }
+
+   
 }
