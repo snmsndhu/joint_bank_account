@@ -39,13 +39,42 @@ contract BankAccount {
         }
     }
 
+    modifier validOwners(address[] calldata owners) {
+        require(owners.length + 1 <= 4, "maximum of 4 owners per account");
+        for(uint i; i < owners.length; i++) {
+            for(uint j = i + 1; j < owners.length; j++) {
+                if(owners[i] == owners[j]) {
+                    revert("no duplicate owners");
+                }
+            }
+        }
+        _;
+    }
+
     function deposit(uint accountId) external payable accountOwner(accountId){
         accounts[accountId].balance += msg.value;
 
     }
 
-    function createAccount(address[] calldata otherOwners) external {
+    function createAccount(address[] calldata otherOwners) external validOwners(otherOwners) {
+        address[] memory owners = new address[](otherOwners.length + 1);
+        owners[otherOwners.length] = msg.sender;
 
+        uint id = nextAccountId;
+
+        for(uint idx; idx < owners.length; idx++) {
+            if(idx < owners.length - 1) {
+                owners[idx] = otherOwners[idx];
+            }
+            if(userAccounts[owners[idx]].length > 2) {
+                revert("each user can have a max 3 accounts");
+            }
+            userAccounts[owners[idx]].push(id);
+        }
+
+        accounts[id].owners = owners;
+        nextAccountId++;
+        emit AccountCreated(owners, id, block.timestamp);
     }
 
     function requestWithdrawl(uint accountId, uint amount)  external {
@@ -78,5 +107,4 @@ contract BankAccount {
 
     }
 
-   
 }
