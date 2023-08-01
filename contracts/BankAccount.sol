@@ -35,5 +35,35 @@ contract BankAccount {
 
     }
 
+    function requestWithdrawl(uint accountId, uint amount)  external {
+
+
+    }
+
+    function approveWithdrawl(uint accountId, uint withdrawId) external {
+
+
+    }
+
+    function withdraw (uint accountId, uint withdrawId) external {
+
+    }
+
+    function getBalance(uint accountId) public view returns (uint) {
+
+    }
+
+    function getOwners(uint accountId) public view returns (address[] memory) {
+
+    }
+
+    function getApprovals(uint accountId, uint withdrawId) public view returns (uint) {
+
+    }
+
+    function getAccounts() public view returns (uint[] memory) {
+        
+    }
+
    
 }
