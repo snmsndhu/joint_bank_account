@@ -51,6 +51,11 @@ contract BankAccount {
         _;
     }
 
+    modifier sufficientBalance(uint accountId, uint amount) {
+        require(accounts[accountId].balance >= amount, "insufficient balance");
+        _;
+    }
+
     function deposit(uint accountId) external payable accountOwner(accountId){
         accounts[accountId].balance += msg.value;
 
@@ -77,9 +82,13 @@ contract BankAccount {
         emit AccountCreated(owners, id, block.timestamp);
     }
 
-    function requestWithdrawl(uint accountId, uint amount)  external {
-
-
+    function requestWithdrawl(uint accountId, uint amount)  external accountOwner(accountId) {
+        uint256 id = nextWithdrawId;
+        WithdrawRequest storage request = accounts[accountId].withdrawRequests[id];
+        request.user = msg.sender;
+        request.amount = amount;
+        nextWithdrawId++;
+        emit WithdrawRequested(msg.sender, accountId, id, amount, block.timestamp);
     }
 
     function approveWithdrawl(uint accountId, uint withdrawId) external {
