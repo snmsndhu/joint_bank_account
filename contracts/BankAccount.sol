@@ -91,8 +91,14 @@ contract BankAccount {
         emit WithdrawRequested(msg.sender, accountId, id, amount, block.timestamp);
     }
 
-    function approveWithdrawl(uint accountId, uint withdrawId) external {
+    function approveWithdrawl(uint accountId, uint withdrawId) external accountOwner(accountId){
+        WithdrawRequest storage request = accounts[accountId].withdrawRequests[withdrawId];
+        request.approvals++;
+        request.ownersApproved[msg.sender] = true;
 
+        if(request.approvals == accounts[accountId].owners.length - 1) {
+            request.approved = true;
+        }
 
     }
 
