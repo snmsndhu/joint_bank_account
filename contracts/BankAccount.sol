@@ -56,6 +56,13 @@ contract BankAccount {
         _;
     }
 
+    modifier canApprove( uint accountId, uint withdrawId) {
+        require(!accounts[accountId].withdrawRequests[withdrawId].approved, "this request is already approved");
+        require(accounts[accountId].withdrawRequests[withdrawId].user != msg.sender, "you cannot approve this request");
+        require(accounts[accountId].withdrawRequests[withdrawId].user != address(0), "this request does not exit");
+        require(!accounts[accountId].withdrawRequests[withdrawId].ownersApproved[msg.sender], "you have already approved this request");
+        _;   
+    }
     function deposit(uint accountId) external payable accountOwner(accountId){
         accounts[accountId].balance += msg.value;
 
