@@ -136,7 +136,7 @@ contract BankAccount {
     }
 
     function getApprovals(uint accountId, uint withdrawId) public view returns (uint256) {
-        return accounts[accountId].withdrawRequests[withdrawId].approvals
+        return accounts[accountId].withdrawRequests[withdrawId].approvals;
     }
 
     function getAccounts() public view returns (uint[] memory) {
