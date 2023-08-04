@@ -132,7 +132,7 @@ contract BankAccount {
     }
 
     function getOwners(uint accountId) public view returns (address[] memory) {
-
+        return accounts[accountId].owners;
     }
 
     function getApprovals(uint accountId, uint withdrawId) public view returns (uint) {
