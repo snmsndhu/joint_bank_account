@@ -85,6 +85,7 @@ describe("BankAccount", function () {
       const { bankAccount, addr0 } = await loadFixture(deployBankAccount);
       await expect(bankAccount.connect(addr0).createAccount([addr0.address])).to
         .be.reverted;
+      console.log();
     });
 
     it("should not allow creating an account with duplicate owners", async () => {
@@ -101,6 +102,15 @@ describe("BankAccount", function () {
             addr4.address,
           ])
       ).to.be.reverted;
+    });
+
+    it("should not allow creating an more then 3 accounts", async () => {
+      const { bankAccount, addr0 } = await loadFixture(deployBankAccount);
+
+      for (let idx = 0; idx < 3; idx++) {
+        await bankAccount.connect(addr0).createAccount([]);
+      }
+      await expect(bankAccount.connect(addr0).createAccount([])).to.be.reverted;
     });
   });
 });
