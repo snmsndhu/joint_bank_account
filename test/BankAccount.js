@@ -25,7 +25,7 @@ describe("BankAccount", function () {
     it("should allow creating a single user account", async () => {
       const { bankAccount, addr0 } = await loadFixture(deployBankAccount);
       await bankAccount.connect(addr0).createAccount([]);
-      const accounts = bankAccount.connect(addr0).getAccounts();
+      const accounts = await bankAccount.connect(addr0).getAccounts();
       expect(accounts.length).to.equal(1);
     });
   });
