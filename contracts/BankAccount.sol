@@ -8,7 +8,7 @@ contract BankAccount {
     event Withdraw(uint indexed withdrawId, uint timestamp);
     event AccountCreated(address[] owners, uint indexed id, uint timestamp);
 
-    struct WithdrawRequest{
+    struct WithdrawRequests{
         address user;
         uint amount;
         uint approvals;
@@ -18,7 +18,7 @@ contract BankAccount {
     struct Account {
         address[] owners;
         uint balance;
-        mapping(uint => WithdrawRequest) withdrawRequests;
+        mapping(uint => WithdrawRequests) withdrawRequests;
     }
 
     mapping(uint => Account) accounts;
@@ -63,6 +63,12 @@ contract BankAccount {
         require(!accounts[accountId].withdrawRequests[withdrawId].ownersApproved[msg.sender], "you have already approved this request");
         _;   
     }
+
+    modifier canWithdraw(uint accountId, uint withdrawId) {
+        require(accounts[accountId].withdrawRequests[withdrawId].user == msg.sender, "you did not create this request");
+        require(accounts[accountId].withdrawRequests[withdrawId].approved, "this request is not approved");
+        _;
+    }
     function deposit(uint accountId) external payable accountOwner(accountId){
         accounts[accountId].balance += msg.value;
 
@@ -91,7 +97,7 @@ contract BankAccount {
 
     function requestWithdrawl(uint accountId, uint amount)  external accountOwner(accountId) sufficientBalance(accountId, amount) {
         uint256 id = nextWithdrawId;
-        WithdrawRequest storage request = accounts[accountId].withdrawRequests[id];
+        WithdrawRequests storage request = accounts[accountId].withdrawRequests[id];
         request.user = msg.sender;
         request.amount = amount;
         nextWithdrawId++;
@@ -99,7 +105,7 @@ contract BankAccount {
     }
 
     function approveWithdrawl(uint accountId, uint withdrawId) external accountOwner(accountId) canApprove(accountId, withdrawId){
-        WithdrawRequest storage request = accounts[accountId].withdrawRequests[withdrawId];
+        WithdrawRequests storage request = accounts[accountId].withdrawRequests[withdrawId];
         request.approvals++;
         request.ownersApproved[msg.sender] = true;
 
@@ -109,7 +115,7 @@ contract BankAccount {
 
     }
 
-    function withdraw (uint accountId, uint withdrawId) external {
+    function withdraw (uint accountId, uint withdrawId) external canWithdraw(accountId, withdrawId) {
         uint amount = accounts[accountId].withdrawRequests[withdrawId].amount;
         require(accounts[accountId].balance >= amount, "insufficcient balance");
 
