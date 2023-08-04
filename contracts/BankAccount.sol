@@ -98,7 +98,7 @@ contract BankAccount {
         emit WithdrawRequested(msg.sender, accountId, id, amount, block.timestamp);
     }
 
-    function approveWithdrawl(uint accountId, uint withdrawId) external accountOwner(accountId){
+    function approveWithdrawl(uint accountId, uint withdrawId) external accountOwner(accountId) canApprove(accountId, withdrawId){
         WithdrawRequest storage request = accounts[accountId].withdrawRequests[withdrawId];
         request.approvals++;
         request.ownersApproved[msg.sender] = true;
@@ -110,7 +110,7 @@ contract BankAccount {
     }
 
     function withdraw (uint accountId, uint withdrawId) external {
-
+        uint amount = accounts[accountId].withdrawRequests[withdrawId].amount;
     }
 
     function getBalance(uint accountId) public view returns (uint) {
