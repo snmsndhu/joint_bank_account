@@ -154,7 +154,23 @@ describe("BankAccount", function () {
   });
 
   describe("withdraw", () => {
-    describe("request a withdraw", () => {});
+    describe("request a withdraw", () => {
+      it("account owner can request withdraw", async () => {
+        const { bankAccount, addr0 } = await deployBankAccountWithAccounts(
+          1,
+          100
+        );
+        await bankAccount.connect(addr0).requestWithdrawl(0, 100);
+      });
+      it("account owner can not request withdraw with invalid amount", async () => {
+        const { bankAccount, addr0 } = await deployBankAccountWithAccounts(
+          1,
+          100
+        );
+        await expect(bankAccount.connect(addr0).requestWithdrawl(0, 101)).to.be
+          .reverted;
+      });
+    });
     describe("Approve a withdraw", () => {});
     describe("Make withdraw", () => {});
   });
