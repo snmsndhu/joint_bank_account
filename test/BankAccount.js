@@ -152,4 +152,10 @@ describe("BankAccount", function () {
         .be.reverted;
     });
   });
+
+  describe("withdraw", () => {
+    describe("request a withdraw", () => {});
+    describe("Approve a withdraw", () => {});
+    describe("Make withdraw", () => {});
+  });
 });
